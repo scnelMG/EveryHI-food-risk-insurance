@@ -1,0 +1,26 @@
+names:
+  - jabgogbab
+  - baechugimchi
+  - doenjangjjigae
+  - gimchijjigae
+  - myeolchibokk-eum
+  - Sigeumchinamul
+  - gajinamul
+  - gosalinamul
+  - miyeoggug
+  - gimbab
+  - bulgogi
+  - aehobagbokk-eum
+  - musaengchae
+  - jabchae
+  - mugug
+  - godeung-eogu-i
+  - ssalbab
+  - gyelanhulai
+  - gyelanmal-i
+  - ramyeon
+  - siraegiguk
+  - ddangkongjorim
+nc: 22
+train: ./train.txt
+val: /val.txt
