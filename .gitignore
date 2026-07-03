@@ -25,3 +25,8 @@ Thumbs.db
 *.sas7bdat
 *.zip
 *.cache
+
+# Public portfolio exclusions
+artifacts/models/*.pt
+artifacts/data/*.xls
+artifacts/data/*.xlsx
