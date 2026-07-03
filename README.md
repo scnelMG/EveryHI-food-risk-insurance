@@ -1,147 +1,102 @@
-# EveryHI - Food Risk Insurance
+# EveryHI - 식단 기반 질병 위험 보험 추천
 
-Diet-image analysis PoC for estimating nutrition-linked disease risk and matching that risk to disease-insurance coverage.
+> 식단 이미지 분석으로 영양 섭취 패턴을 추정하고, 질병 위험 신호와 보험 보장 항목을 연결한 인슈어테크 PoC입니다.
 
-EveryHI was built as a team insurtech competition project for users in their 20s who already track health habits but may not actively compare insurance products. The service concept turns meal photos into a lightweight health record: food detection, nutrition aggregation, disease-risk estimation, and explainable insurance-product filtering.
+[![Python](https://img.shields.io/badge/Python-ML%20Pipeline-3776AB?logo=python&logoColor=white)](requirements.txt)
+[![YOLOv5](https://img.shields.io/badge/YOLOv5-Food%20Detection-00FFFF)](src/yolov5_data.yaml)
+[![XGBoost](https://img.shields.io/badge/XGBoost-Risk%20Model-FF6600)](docs/modeling.md)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Public%20Safe-2ea44f)](docs/project-brief.md)
 
-This repository is curated for portfolio review. It keeps the AI/data pipeline, notebooks, selected artifacts, and documentation that can be inspected publicly, while excluding raw datasets, private team materials, and Drive archives.
+## 개요
 
-## Quick Review Path
+EveryHI는 사용자가 촬영한 식단 사진을 바탕으로 음식 종류를 탐지하고, 영양 정보를 집계한 뒤, 질병 위험 신호와 보험 상품의 보장 질병을 매칭하는 팀 프로젝트입니다. 이 저장소는 전체 서비스 구현물이 아니라, 공개 가능한 AI/데이터 파이프라인과 기술적 의사결정을 검토할 수 있도록 정리한 포트폴리오 버전입니다.
 
-1. Read this README for the service problem, role, evidence, and public-safety boundary.
-2. Inspect [docs/project-brief.md](docs/project-brief.md) for contribution scope and reviewer notes.
-3. Inspect [docs/modeling.md](docs/modeling.md) for the food-detection and disease-risk pipeline.
-4. Inspect [docs/data.md](docs/data.md) for source data, excluded materials, and publication blockers.
-5. Inspect [docs/recommendation.md](docs/recommendation.md) and [src/recommendation.py](src/recommendation.py) for the rule-based matching logic.
-6. Review notebooks only as experiment records, not as a guaranteed end-to-end public reproduction path.
+이 프로젝트는 의료 진단, 보험 심사, 보험료 산정, 투자/금융 조언을 목적으로 하지 않습니다.
 
-## Problem
+## 빠른 검토 경로
 
-Young adults often record meals and health habits, but insurance products are still difficult to compare against personal risk context. EveryHI explores whether a meal-photo habit can become a practical entry point for insurance discovery:
+| 먼저 볼 것 | 확인할 내용 |
+| --- | --- |
+| [docs/project-brief.md](docs/project-brief.md) | 문제 정의, 역할 범위, 포트폴리오 관점의 검토 포인트 |
+| [docs/modeling.md](docs/modeling.md) | 음식 탐지, 영양 변수, 질병 위험 모델링 흐름 |
+| [docs/data.md](docs/data.md) | 공개 가능 자료와 비공개/제외 자료의 경계 |
+| [docs/recommendation.md](docs/recommendation.md) | 보험 보장 항목 매칭 로직 |
+| [src/recommendation.py](src/recommendation.py) | 규칙 기반 추천 구현 예시 |
 
-- Detect foods from meal images instead of requiring manual meal entry.
-- Convert detected foods into daily, weekly, and monthly nutrition summaries.
-- Estimate disease-risk signals from nutrition and demographic inputs.
-- Recommend disease-insurance products that cover the predicted high-risk diseases.
+## 문제 정의
 
-The project is a proof of concept, not a production insurance, medical, or underwriting system.
+20대 사용자는 식단이나 건강 습관을 기록하더라도, 본인의 생활 패턴과 보험 보장 항목을 연결해 이해하기 어렵습니다. EveryHI는 식단 기록을 보험 탐색의 진입점으로 사용할 수 있는지 검증했습니다.
 
-## My Role and Contribution
+- 식단 사진에서 여러 음식 객체를 탐지합니다.
+- 탐지된 음식을 영양 정보로 변환하고 기간별로 집계합니다.
+- 영양 변수, 나이, 성별을 활용해 질병 위험 신호를 추정합니다.
+- 위험 신호와 보험 상품의 보장 질병을 연결해 추천 사유를 설명합니다.
 
-This was a team competition project. My public contribution focus in this repository is the AI/data and portfolio-publication surface:
+## 내 역할
 
-- Food-class definition, image collection workflow, YOLO label conversion, and detection-pipeline documentation.
-- Disease-risk modeling notes using nutrition variables, age, sex, class-imbalance handling, and XGBoost selection.
-- Rule-based insurance matching logic that keeps recommendation reasons explainable.
-- Public-safe repository curation: README, data policy, modeling notes, notebook review path, and blocker documentation.
+팀 프로젝트 산출물이며, 이 README는 단독 제작을 주장하지 않습니다. 공개 포트폴리오에서 설명 가능한 기여 범위는 다음과 같습니다.
 
-The README does not claim sole ownership of the entire team submission. Team-only planning files, raw data, and private submission materials are intentionally excluded from the public review path.
+- 음식 클래스 정의, 이미지 수집 흐름, YOLO 라벨 변환 및 탐지 파이프라인 정리
+- 영양 변수 기반 질병 위험 모델링 실험과 XGBoost 선택 근거 문서화
+- 보험 추천 로직을 설명 가능한 규칙 기반 구조로 정리
+- 원본 데이터, 팀 내부 자료, 대용량 모델 artifact를 제외한 공개 안전성 정리
 
-## Approach and Pipeline
+## 기술적 의사결정
+
+| 영역 | 선택 | 이유 |
+| --- | --- | --- |
+| 음식 인식 | YOLOv5 객체 탐지 | 한 장의 식단 사진에 여러 음식이 포함될 수 있어 단일 분류보다 객체 탐지가 적합합니다. |
+| 질병 위험 모델 | 영양 변수 + 인구통계 변수 + XGBoost | 표 형태의 영양/건강 변수를 다루고 feature importance를 검토하기 쉽습니다. |
+| 클래스 불균형 | SMOTE, stratified validation | 질병 라벨 불균형으로 인한 다수 클래스 편향을 줄이기 위한 선택입니다. |
+| 보험 추천 | 규칙 기반 필터링 | 추천 결과의 이유를 사람이 검토할 수 있도록 블랙박스 랭킹을 피했습니다. |
+
+## 파이프라인
 
 ```mermaid
 flowchart LR
-    A["Meal photo"] --> B["YOLOv5 food detection"]
-    B --> C["Food-to-nutrition mapping"]
-    C --> D["Daily/weekly/monthly nutrition aggregation"]
-    D --> E["XGBoost disease-risk model"]
-    E --> F["High-risk disease thresholding"]
-    F --> G["Rule-based insurance coverage matching"]
+    A["식단 사진"] --> B["YOLOv5 음식 탐지"]
+    B --> C["음식-영양 정보 매핑"]
+    C --> D["일/주/월 단위 영양 집계"]
+    D --> E["질병 위험 모델"]
+    E --> F["고위험 질병 후보"]
+    F --> G["보험 보장 항목 매칭"]
 ```
 
-### Core technical decisions
+## 결과 근거
 
-| Area | Decision | Why it mattered |
-| --- | --- | --- |
-| Food recognition | YOLOv5 object detection | Food photos can contain multiple items, so object detection fits the user flow better than single-label classification. |
-| Food classes | Korean meal staples from the project dataset | The model was scoped to foods represented in the collected and labeled dataset, not arbitrary global cuisine. |
-| Disease-risk model | Nutrition variables plus age/sex | The model links repeated diet records to disease-risk signals rather than single-image outputs. |
-| Imbalance handling | SMOTE and stratified validation | Disease labels are imbalanced, so naive training would overfit the majority class. |
-| Insurance recommendation | Rule-based filtering by covered diseases | The PoC favors explainable recommendation reasons over opaque ranking. |
+- 프로젝트 산출물 기준 YOLOv5 학습 설정: batch size 16, 200 epochs
+- 프로젝트 artifact 기준 mAP 0.94 at IoU 0.5
+- 질병 위험 모델 입력: 23개 영양 변수, 나이, 성별
+- 추천 로직: 질병 위험 후보와 보험 보장 항목의 explainable matching
+- 대표 결과 이미지: [artifacts/images/pr_curve.png](artifacts/images/pr_curve.png)
 
-## Evidence and Results
+원본 데이터와 전체 학습 artifact는 공개 저장소에 포함하지 않았기 때문에, 이 저장소의 결과는 재현 가능한 production benchmark가 아니라 포트폴리오 검토용 근거입니다.
 
-Evidence currently available in the public repo:
-
-- Food image dataset design: 20 food categories in the presentation notes, roughly 300 images per food class, train:test split of 8:2.
-- Food detection result: YOLOv5 training configuration documented as batch size 16 and 200 epochs, with reported mAP 0.94 at IoU 0.5 in the project artifact.
-- Detection artifact: [artifacts/images/pr_curve.png](artifacts/images/pr_curve.png).
-- Disease-risk feature design: 23 nutrition variables plus age and sex, documented in [docs/modeling.md](docs/modeling.md).
-- Recommendation logic: inspectable example implementation in [src/recommendation.py](src/recommendation.py).
-- Final presentation artifact: [artifacts/presentations/EveryHI_final_presentation.pptx](artifacts/presentations/EveryHI_final_presentation.pptx).
-
-The repository does not invent new metrics beyond the preserved project artifacts. Full retraining evidence is limited because raw image, nutrition, and survey datasets are not included publicly.
-
-## Repository Structure
-
-```text
-.
-|-- artifacts/
-|   |-- data/               # selected insurance-product artifact; review before public release
-|   |-- images/             # representative result image
-|   |-- models/             # trained model artifact; Git LFS / release-asset candidate
-|   `-- presentations/      # final presentation artifact
-|-- docs/
-|   |-- archive-manifest.md # local archive policy
-|   |-- data.md             # data sources, exclusions, and blockers
-|   |-- modeling.md         # detection and disease-risk modeling notes
-|   |-- project-brief.md    # portfolio brief and review path
-|   |-- recommendation.md   # insurance matching logic
-|   `-- retrospective.md    # limits and improvement path
-|-- notebooks/
-|   |-- 01_yolov5_food_detection.ipynb
-|   |-- 02_yolo_label_conversion.ipynb
-|   |-- 03_disease_prediction_model.ipynb
-|   `-- 04_everyhi_insurance_recommendation.ipynb
-`-- src/
-    |-- detect_yolov5.py
-    |-- extract_food.py
-    |-- recommendation.py
-    |-- translabel.py
-    `-- yolov5_data.yaml
-```
-
-## Data and Public Safety
-
-Public-safe materials are limited to curated docs, notebooks, source snippets, representative result artifacts, and the final deck already present in this repo.
-
-Excluded from public publication:
-
-- Raw food images, labels, crawled source data, and full contest/source datasets.
-- Korean National Health and Nutrition Examination Survey raw data and original food-nutrition source tables.
-- Team-private drafts, submission forms, personal information, signed documents, and Drive folders.
-- Local `archive/` contents, copied `.git` folders, zip archives, credentials, and notebook checkpoints.
-
-Known files requiring publication review before a new push or public release:
-
-- `artifacts/models/yolov5_food_detection_best.pt` is 57,097,482 bytes, over the 50 MB portfolio threshold. Treat it as a Git LFS or external-release-asset candidate.
-- `artifacts/data/disease_insurance_products.xls` is a risk-named insurance-product data file. It must be reviewed for redistribution rights and private/proprietary content before treating the repo as fully publish-ready.
-
-## Reproducibility
-
-This repo supports inspection-first review. The command `python -m src.recommendation` is currently unverified and blocked by malformed demo string literals in `src/recommendation.py`, so it is not advertised as a reproduction step.
+## 재현 가능성
 
 ```bash
 pip install -r requirements.txt
 ```
 
-What can be inspected publicly:
+공개 checkout에서 확인 가능한 것:
 
-- Pipeline design in `docs/`.
-- Notebook experiment order in `notebooks/`.
-- YOLOv5 configuration and label utility code in `src/`.
-- Recommendation ranking structure through source inspection of `src/recommendation.py`; the module-level demo is blocked until the demo literals are repaired.
+- `docs/`의 설계와 모델링 근거
+- `notebooks/`의 실험 흐름
+- `src/`의 라벨 변환, 탐지 설정, 추천 로직
 
-What is not fully reproducible from a clean public checkout:
+공개 checkout에서 완전 재현이 어려운 것:
 
-- End-to-end YOLOv5 retraining, because raw food images and labels are excluded.
-- End-to-end disease-model retraining, because original survey and nutrition source data are excluded.
-- Production-grade insurance matching, because official product terms, premiums, underwriting rules, and coverage details are not represented completely.
+- 원본 음식 이미지와 라벨이 필요한 YOLO 재학습
+- 원본 영양/건강 데이터가 필요한 질병 위험 모델 재학습
+- 실제 보험 약관, 보험료, 인수 기준을 반영한 상품 추천
 
-## Limitations
+## 공개/비공개 경계
 
-- The disease-risk model is a competition PoC and must not be used for diagnosis, underwriting, pricing, medical advice, or financial advice.
-- The recommendation layer matches predicted high-risk diseases to covered-disease fields; it does not validate premiums, exclusions, waiting periods, eligibility, or current policy terms.
-- Notebook code preserves experiment history and may require local paths or excluded data to rerun.
-- The repository still contains two existing publication-review risks: a model file over 50 MB and an `.xls` insurance-product artifact.
-- Service UX was conceptual; no production mobile or web application is included in this public repo.
+공개 저장소에는 검토 가능한 문서, 소스 코드, 일부 결과 이미지, 노트북만 남겼습니다. 원본 이미지, 원천 데이터, 팀 내부 문서, 개인정보, 대용량 모델, Drive archive, `.git` 복사본은 GitHub 공개 대상에서 제외했습니다.
+
+## 한계
+
+- 질병 위험 모델은 PoC이며 진단이나 보험 심사에 사용할 수 없습니다.
+- 추천 로직은 보장 질병명 기반 매칭이며 실제 보험 약관의 예외, 대기기간, 보험료, 가입 가능성을 판단하지 않습니다.
+- 노트북은 실험 기록 성격이 강하며, 일부 실행은 제외된 로컬 데이터에 의존합니다.
+- 서비스 UI는 개념 검증 단계이며 production app은 포함되어 있지 않습니다.
