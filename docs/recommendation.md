@@ -1,25 +1,31 @@
-﻿# Insurance Recommendation
+# Insurance Recommendation
 
-## 목표
+## Goal
 
-질병 예측 모델이 산출한 고위험 질병을 기반으로, 해당 질병을 보장하는 보험상품을 추천합니다.
+The recommendation layer takes high-risk disease outputs from the disease-risk model and ranks disease-insurance products that cover those diseases.
 
-## 추천 흐름
+## Recommendation Flow
 
-1. 한 달간 누적된 영양소 평균과 사용자 정보를 질병 예측 모델에 입력합니다.
-2. 질병별 예측 확률을 계산합니다.
-3. recall과 precision의 교차점을 기준으로 질병별 고위험군 임계값을 설정합니다.
-4. 고위험 질병과 보험상품의 보장 항목을 매칭합니다.
-5. 보장 질병 수와 위험도 점수를 기준으로 추천 우선순위를 정합니다.
+1. Feed monthly average nutrition totals and user attributes into the disease-risk model.
+2. Estimate disease-level risk probabilities.
+3. Set disease-specific high-risk thresholds using the project's recall/precision tradeoff.
+4. Match high-risk diseases to insurance-product coverage fields.
+5. Rank matching products by number of covered high-risk diseases and total high-risk score.
 
-## Rule-based Filtering
+## Rule-Based Filtering
 
-이 프로젝트의 보험 추천은 복잡한 추천 시스템보다는 설명 가능한 규칙 기반 접근을 선택했습니다.
+This project intentionally used an explainable rule-based filter instead of a complex recommender system.
 
-- 입력: 질병별 위험 점수, 질병보험 상품 데이터
-- 규칙: 고위험 질병을 보장하는 상품 우선
-- 정렬 기준: 보장 질병 수, 고위험 질병 점수 합
-- 장점: 공모전 발표와 프로토타입에서 추천 사유를 설명하기 쉽다
-- 한계: 보험료, 가입 조건, 면책 기간, 실제 약관 정합성까지 반영하려면 추가 데이터가 필요하다
+- Input: disease-level risk scores and disease-insurance product data.
+- Rule: prioritize products covering the user's high-risk diseases.
+- Ranking criteria: covered high-risk disease count, then sum of matched disease-risk scores.
+- Benefit: recommendation reasons can be explained in a competition prototype.
+- Limitation: premiums, eligibility, exclusions, waiting periods, and current policy terms require additional verified product data.
 
-관련 예시 코드는 `src/recommendation.py`에 정리했습니다.
+The inspectable example implementation is in `src/recommendation.py`.
+
+## Public Review Notes
+
+- The demo implementation uses `DiseaseRisk` and `InsuranceProduct` dataclasses so the ranking rule can be inspected without private data.
+- The command `python -m src.recommendation` is currently unverified and blocked by malformed demo string literals in `src/recommendation.py`; treat this as source-inspection evidence until the demo literals are repaired.
+- The approach is not a licensed insurance recommendation system and must not be presented as financial advice.

@@ -1,22 +1,32 @@
-﻿# Retrospective
+# Retrospective
 
-## 잘한 점
+## What Worked
 
-- 20대의 건강관리 루틴과 사진 기록 습관을 보험 추천 문제와 연결해 명확한 사용자 동기를 만들었다.
-- 식단 이미지 인식, 영양소 집계, 질병 예측, 보험 추천을 하나의 서비스 플로우로 설계했다.
-- 불균형 질병 데이터를 고려해 SMOTE와 Stratified k-fold를 적용했다.
-- 단순 상품 나열이 아니라 위험 질병 기반 추천이라는 차별점을 만들었다.
+- The project connected a realistic user habit, meal photos, to a difficult insurance-discovery problem.
+- The pipeline joined food detection, nutrition aggregation, disease-risk prediction, and insurance-product matching into one service flow.
+- SMOTE and stratified validation were considered because disease labels were imbalanced.
+- The recommendation layer used disease-coverage rules, which made the prototype easier to explain than an opaque ranking model.
 
-## 한계
+## Technical Tradeoffs
 
-- 원천 데이터와 실험 노트북이 대용량/중복 상태로 남아 있어 공개 포트폴리오로 바로 보기 어려웠다.
-- 노트북 중심 실험이라 재사용 가능한 모듈화가 부족했다.
-- 보험 추천은 실제 약관, 보험료, 가입 조건까지 반영하지 못한 PoC 수준이다.
-- 식단 사진을 꾸준히 올려야 하는 사용자 부담은 서비스 확장 시 해결해야 할 UX 과제다.
+- YOLOv5 was practical for detecting multiple foods in one image, but the project scope was limited to foods represented in the collected dataset.
+- Notebook-first experimentation helped during competition work, but it limited later reproducibility and modular reuse.
+- Rule-based insurance matching was transparent, but it did not cover premiums, underwriting rules, exclusions, or policy-term freshness.
 
-## 개선 방향
+## Public Repository Constraints
 
-- 데이터 전처리, 학습, 추론, 추천 단계를 CLI 또는 파이프라인 코드로 분리
-- 모델 성능표와 confusion matrix 등 실험 결과를 정형화해 비교 가능하게 관리
-- 보험상품 데이터 스키마를 정리하고 약관/보장 범위 기반 매칭 정확도 개선
-- 모바일 프로토타입 또는 웹 데모를 만들어 실제 사용 흐름을 검증
+- Raw datasets and team-private materials are excluded, so public retraining is intentionally not promised.
+- The repository still contains a model file above 50 MB and an insurance-product `.xls` artifact that require review before a clean public push decision.
+- Preserved notebooks may contain paths or assumptions from the original experiment environment.
+
+## What I Would Improve
+
+- Split preprocessing, training, inference, and recommendation into CLI commands or pipeline modules.
+- Replace the large tracked model with Git LFS or a release asset.
+- Replace the insurance-product spreadsheet with a clearly licensed public sample schema if redistribution is not confirmed.
+- Add structured model-comparison tables, confusion matrices, and reproducible experiment metadata.
+- Build a small web or mobile prototype to validate the real user flow.
+
+## Reviewer Notes
+
+Read this project as an insurtech AI/data PoC, not as a production health or insurance system. The strongest evidence is the end-to-end pipeline design, preserved detection result, feature strategy, and inspectable recommendation rule.
