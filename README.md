@@ -1,4 +1,10 @@
+<p align="center">
+  <img src="artifacts/images/pr_curve.png" alt="EveryHI 실제 모델 평가 결과" width="640" />
+</p>
+
 # EveryHI - 식단 기반 질병 위험 보험 추천
+
+<p align="center">식단 이미지 · 질병 위험 예측 · 개인화 보험 추천 · Python · YOLOv5</p>
 
 > 식단 이미지 분석으로 영양 섭취 패턴을 추정하고, 질병 위험 신호와 보험 보장 항목을 연결한 인슈어테크 PoC입니다.
 
