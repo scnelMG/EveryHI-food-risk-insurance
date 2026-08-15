@@ -1,32 +1,21 @@
-# Retrospective
+# 회고와 다음 개선
 
-## What Worked
+## 잘 작동한 접근
 
-- The project connected a realistic user habit, meal photos, to a difficult insurance-discovery problem.
-- The pipeline joined food detection, nutrition aggregation, disease-risk prediction, and insurance-product matching into one service flow.
-- SMOTE and stratified validation were considered because disease labels were imbalanced.
-- The recommendation layer used disease-coverage rules, which made the prototype easier to explain than an opaque ranking model.
+- 매일의 식단 사진을 건강관리와 보험 탐색을 잇는 자연스러운 진입점으로 설정했습니다.
+- 음식 탐지, 영양 집계, 위험 신호, 보장 항목 매칭을 하나의 사용자 흐름으로 연결했습니다.
+- 질병 라벨 불균형을 SMOTE와 stratified validation으로 다루고, 추천 사유는 규칙으로 남겼습니다.
 
-## Technical Tradeoffs
+## 포트폴리오 관점의 한계
 
-- YOLOv5 was practical for detecting multiple foods in one image, but the project scope was limited to foods represented in the collected dataset.
-- Notebook-first experimentation helped during competition work, but it limited later reproducibility and modular reuse.
-- Rule-based insurance matching was transparent, but it did not cover premiums, underwriting rules, exclusions, or policy-term freshness.
+- 원본 데이터·가중치·보험 원문을 공개할 수 없어 완전한 재학습을 제공하지 않습니다.
+- 음식 종류 탐지와 섭취량 추정은 별개 문제이며, 시연에서는 사용자 확인 단계를 전제로 합니다.
+- 위험 점수는 PoC 신호일 뿐 의학적 진단·보험 인수 판단으로 해석할 수 없습니다.
+- 발표 자료의 20개 범주 메모와 공개 YAML의 22개 라벨 차이는 원본 주석이 비공개라 사후 정합성을 검증할 수 없습니다.
 
-## Public Repository Constraints
+## 다음 단계
 
-- Raw datasets and team-private materials are excluded, so public retraining is intentionally not promised.
-- The repository still contains a model file above 50 MB and an insurance-product `.xls` artifact that require review before a clean public push decision.
-- Preserved notebooks may contain paths or assumptions from the original experiment environment.
-
-## What I Would Improve
-
-- Split preprocessing, training, inference, and recommendation into CLI commands or pipeline modules.
-- Replace the large tracked model with Git LFS or a release asset.
-- Replace the insurance-product spreadsheet with a clearly licensed public sample schema if redistribution is not confirmed.
-- Add structured model-comparison tables, confusion matrices, and reproducible experiment metadata.
-- Build a small web or mobile prototype to validate the real user flow.
-
-## Reviewer Notes
-
-Read this project as an insurtech AI/data PoC, not as a production health or insurance system. The strongest evidence is the end-to-end pipeline design, preserved detection result, feature strategy, and inspectable recommendation rule.
+1. 라이선스가 확인된 공개 샘플 데이터로 전처리·학습·추론을 분리한 재현 경로를 구성합니다.
+2. 질병별 모델 비교표, confusion matrix, 데이터 버전을 남깁니다.
+3. 보험 정보는 라이선스와 최신성 검증이 가능한 필드로만 분리하고, 추천 사유와 한계를 사용자에게 명확히 표시합니다.
+4. 섭취량 입력 UX를 검증해 사진 인식 결과와 실제 영양 집계 간의 오차를 줄입니다.

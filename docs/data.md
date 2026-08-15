@@ -1,52 +1,29 @@
-# Data and Public-Safety Policy
+# 데이터와 공개 범위
 
-This document separates project evidence from material that should not be treated as public portfolio content. The repository is intended for inspection of the EveryHI AI/data pipeline, not redistribution of raw datasets or private competition materials.
+## 사용한 데이터 범주
 
-## Data Inputs
-
-| Data | Purpose | Public repository handling |
+| 데이터 | 사용 목적 | 공개 저장소 처리 |
 | --- | --- | --- |
-| Food image data | YOLOv5 food object-detection training | Raw source stays in local archive or excluded source storage, not in the public repo |
-| Food label data | Bounding-box training labels | Raw labels are excluded; conversion logic is kept in `src/` |
-| Korean National Health and Nutrition Examination Survey data | Nutrition-based disease-risk modeling | Raw survey data is excluded; feature strategy is documented only |
-| Food-nutrition source data | Mapping detected foods to nutrient totals | Original source tables are excluded; pipeline behavior is documented |
-| Disease-insurance product data | Matching high-risk diseases to covered products | `artifacts/data/disease_insurance_products.xls` exists but must be reviewed before public-release approval |
+| 음식 이미지와 바운딩 박스 라벨 | YOLOv5 음식 객체 탐지 학습 | 원본 이미지·라벨 제외 |
+| 국민건강영양조사 기반 영양·건강 변수 | 식단 패턴 기반 위험 신호 모델링 | 원자료 제외 |
+| 음식-영양 정보 | 탐지 결과의 영양 섭취량 집계 | 원문 테이블 제외 |
+| 보험 상품 보장 정보 | 질병-보장 항목 매칭 | 원문·크롤링 결과 제외 |
 
-## Food Detection Dataset
+프로젝트 메모에는 AI Hub와 웹 크롤링 이미지로 음식 범주를 구성하고, 범주당 약 300장을 수집해 train:test 8:2로 나눴다고 남아 있습니다. 공개 `src/yolov5_data.yaml`에는 22개 라벨이 보존돼 있으며, 메모의 20개 범주와 차이가 있습니다. 원본 라벨·학습 설정을 공개하지 않으므로 이 차이를 사후에 단정하지 않습니다.
 
-- Project notes describe 20 selected food categories.
-- Roughly 300 images per food class were collected for the project dataset.
-- Sources included AI Hub and web-crawled food images.
-- Food regions were labeled with bounding boxes for object detection.
-- Training and test data were split at train:test = 8:2.
+## 공개한 것
 
-## Disease-Risk Dataset
+- 문제 정의와 모델링·추천 의사결정 문서
+- 라벨 변환, YOLOv5 실행 연결부, 규칙 추천 코드
+- 출력이 비워진 공개 검토용 노트북
+- 실제 최종 발표 자료와 그 자료에서 추출한 서비스 화면
+- 원 프로젝트의 보존된 PR curve
 
-- The model used nutrition and health-check variables from the Korean National Health and Nutrition Examination Survey.
-- Inputs were 23 nutrition variables plus age and sex.
-- Target labels covered eight disease categories, including hypertension, dyslipidemia, and stroke.
-- SMOTE was used to address class imbalance in disease labels.
+## 제외한 것
 
-## Public-Safe Boundary
+- 원본 음식 사진, 바운딩 박스 라벨, 대용량 학습 가중치
+- 국민건강영양조사 원자료와 원본 음식-영양 테이블
+- 보험 상품 원문, 크롤링 산출물, 약관·보험료·개인정보
+- 팀 내부 문서, 제출 양식, Drive archive, `.git` 복사본, 환경 변수
 
-The following materials must not be published directly in the GitHub repo:
-
-- Participant forms, team-private documents, or files with personal information.
-- Korean National Health and Nutrition Examination Survey raw data.
-- Full crawled image sets and raw bounding-box labels.
-- Duplicate zip files, large raw datasets, and Drive archives.
-- Unrelated research materials from other projects.
-- Copied `.git` folders, `.env` files, credentials, and notebook checkpoints.
-
-## Existing Publication Blockers
-
-These files already exist in the repository and were not duplicated or modified during portfolio documentation work. They must be reviewed before treating the repo as a clean push/publication candidate.
-
-| File | Current reason for review | Required decision |
-| --- | --- | --- |
-| `artifacts/models/yolov5_food_detection_best.pt` | 57,097,482 bytes, above the 50 MB portfolio threshold | Move to Git LFS or external release storage, or explicitly approve keeping the model in Git history |
-| `artifacts/data/disease_insurance_products.xls` | Insurance-product spreadsheet with redistribution/proprietary-content risk by name and domain | Confirm it contains only public-safe product fields and no restricted, private, or licensed source material |
-
-## Inspection and Reproduction Boundary
-
-The public repository supports review of data design, feature flow, notebook order, representative artifacts, and recommendation logic. It does not support a clean end-to-end retraining run because the raw food-image dataset, original nutrition source data, and original health-survey data are excluded.
+따라서 공개 checkout은 코드와 판단을 검토하는 용도이며, 원본 서비스의 완전한 재학습·상품 추천 재현을 제공하지 않습니다.

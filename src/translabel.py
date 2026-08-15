@@ -1,33 +1,26 @@
-import glob
-import os
+from __future__ import annotations
 
-def translabel(foldername, after_label):
-    # 폴더 안에 있는 txt 파일 리스트
-    filelist = glob.glob('{}\\*.txt'.format(foldername))
+from pathlib import Path
 
-    # 변환시킨 후 넣을 폴더 생성
-    if not os.path.isdir('trans_'+foldername):
-        os.mkdir('trans_'+foldername)
-    
-    # 변환
-    for filename in filelist:
-        with open(filename, 'r') as f:
-            txtlines = ''
-            lines = f.readlines()
-            for line in lines:
-                # 첫번째 공백 찾기 (기존 라벨 찾아내기1)
-                first_blank = line.find(' ')
-                
-                # 공백앞의 문자
-                pre_num = line[0:first_blank]
-                
-                # 공백앞의 문자 제거
-                rm_pre_num = line.lstrip(pre_num)
 
-                # 바꿀 문장
-                after_line = str(after_label) + rm_pre_num
-                txtlines += after_line
-            
-            # 바뀐것 생성
-            with open('trans_' + filename, 'w') as f2:
-                f2.write(txtlines)
+def translabel(
+    input_dir: Path,
+    target_label: int,
+    output_dir: Path | None = None,
+) -> Path:
+    destination = output_dir or input_dir.parent / f"trans_{input_dir.name}"
+    destination.mkdir(parents=True, exist_ok=True)
+
+    for source_file in input_dir.glob("*.txt"):
+        converted_lines = []
+        for line in source_file.read_text(encoding="utf-8").splitlines():
+            original_label, separator, coordinates = line.partition(" ")
+            converted_lines.append(
+                f"{target_label}{separator}{coordinates}" if original_label and separator else line
+            )
+        (destination / source_file.name).write_text(
+            "\n".join(converted_lines) + ("\n" if converted_lines else ""),
+            encoding="utf-8",
+        )
+
+    return destination

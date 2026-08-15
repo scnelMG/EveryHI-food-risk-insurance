@@ -1,65 +1,22 @@
-# Modeling Pipeline
+# 모델링 파이프라인
 
-## 1. Food Image Detection
+## 1. 음식 객체 탐지
 
-The first modeling task reduces user effort: instead of manually entering meals, the user uploads a meal photo and the detection model identifies foods that can be mapped into nutrition records.
+식단 사진 한 장에 여러 음식이 포함될 수 있어 YOLOv5 객체 탐지를 사용했습니다. 프로젝트 산출물에 남은 학습 설정은 batch size 16, 200 epochs이며, 보존된 결과는 IoU 0.5 기준 mAP 0.94입니다.
 
-### Approach
+- 공개 설정: `src/yolov5_data.yaml`
+- 결과 근거: `artifacts/images/pr_curve.png`
+- 실제 인식 예시: `artifacts/images/food-detection-result.png`
+- 실행 연결부: `src/detect_yolov5.py`
 
-- Model: YOLOv5.
-- Food scope: Korean meal staples represented in the collected dataset.
-- Training setup preserved in project notes: batch size 16, epoch 200.
-- Evaluation target: mAP at IoU 0.5.
-- Reported project result: mAP 0.94.
+`detect_yolov5.py`는 upstream YOLOv5의 전체 소스를 복사하지 않고, 별도 clone과 비공개 가중치를 받아 실행하는 연결부입니다. 이 저장소에는 원본 데이터와 가중치가 없으므로 탐지 재학습이나 추론 실행을 기본 경로로 제공하지 않습니다.
 
-### Artifacts
+## 2. 영양 집계
 
-- `notebooks/01_yolov5_food_detection.ipynb`
-- `notebooks/02_yolo_label_conversion.ipynb`
-- `src/yolov5_data.yaml`
-- `artifacts/models/yolov5_food_detection_best.pt`
-- `artifacts/images/pr_curve.png`
+탐지한 음식은 음식-영양 정보와 연결해 일·주·월 단위로 집계합니다. 이 과정은 음식 종류의 인식 결과만으로 섭취량을 확정하지 않으며, 시연 흐름에서는 사용자의 인분·토핑 확인을 전제로 합니다.
 
-### Public Review Notes
+## 3. 질병 위험 신호
 
-- Presentation notes describe a 20-food dataset.
-- The preserved `src/yolov5_data.yaml` lists 22 label names, so this file should be read as an experiment configuration artifact rather than a fresh claim about final service scope.
-- `artifacts/models/yolov5_food_detection_best.pt` is larger than 50 MB and should be reviewed for Git LFS or external release storage before public push approval.
+국민건강영양조사 기반의 23개 영양 변수와 나이·성별을 입력으로 사용했습니다. 8개 질병 라벨을 대상으로 불균형을 완화하기 위해 SMOTE를 적용했고, logistic regression·random forest 등을 비교한 뒤 XGBoost를 최종 실험 모델로 선택한 기록을 보존했습니다. 검증에는 stratified k-fold를 사용했습니다.
 
-## 2. Nutrition Aggregation
-
-Detected foods are mapped to food-nutrition data to calculate intake totals. The service concept split the user flow into three time windows:
-
-- EveryHI: daily meal and nutrition-balance check.
-- WeekHI: weekly cumulative meal record and disease-risk prediction.
-- MonthHI: monthly cumulative meal record, disease-risk prediction, and insurance recommendation.
-
-The public repository documents this flow, but the original nutrition source tables are excluded.
-
-## 3. Disease-Risk Prediction
-
-The disease-risk model uses Korean National Health and Nutrition Examination Survey-derived variables to learn relationships between nutrition intake and disease labels.
-
-### Inputs
-
-- 23 nutrition intake variables.
-- Age.
-- Sex.
-
-### Modeling Strategy
-
-- Disease labels were imbalanced, so SMOTE was applied.
-- Multiple classifiers were explored, including logistic regression and random forest.
-- Stratified k-fold cross-validation was used during experimentation.
-- XGBoost was selected as the final model in the preserved project notes.
-
-### Artifacts
-
-- `notebooks/03_disease_prediction_model.ipynb`
-- `notebooks/04_everyhi_insurance_recommendation.ipynb`
-
-## Evidence and Reproducibility Boundary
-
-- Reported detection evidence is the preserved project result: mAP 0.94 at IoU 0.5, plus `artifacts/images/pr_curve.png`.
-- Disease-risk modeling can be inspected through notebooks and documented feature strategy, but full retraining is blocked in the public repo because the original survey and nutrition-source data are excluded.
-- Model output should be interpreted as a prototype risk signal. It is not medical advice, insurance underwriting evidence, or a production scoring system.
+공개 저장소에는 원자료와 실행 결과 표를 포함하지 않아, 질병별 성능 수치나 production 수준 일반화를 주장하지 않습니다. 모델 출력은 PoC의 위험 신호이며 의료 판단이 아닙니다.

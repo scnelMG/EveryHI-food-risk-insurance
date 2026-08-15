@@ -1,71 +1,32 @@
-# Project Brief
+# EveryHI 프로젝트 브리프
 
-## Problem
+## 문제 정의
 
-EveryHI connects a familiar behavior, taking meal photos, to a hard-to-compare domain: disease-insurance discovery. The service concept asks whether repeated diet records can become a personal risk context for explaining which disease-insurance products may be relevant.
+건강 습관을 기록하는 20대가 자신의 식단 패턴을 보험의 보장 항목과 연결해 이해하기는 쉽지 않습니다. EveryHI는 식단 사진을 기록의 시작점으로 삼아 음식 탐지, 영양 집계, 위험 신호, 보장 항목 매칭을 하나의 흐름으로 연결할 수 있는지 검증했습니다.
 
-## User or Stakeholder
+## 서비스 범위
 
-- Primary user: people in their 20s who are comfortable tracking health habits but are not actively comparing insurance products.
-- Review stakeholder: portfolio reviewers who need to see data-science judgment, service framing, and publication-safety discipline.
-- Domain stakeholder: insurance or health-product teams evaluating whether the concept is explainable enough for a prototype.
+| 단계 | 사용자 경험 | 기술 범위 |
+| --- | --- | --- |
+| EveryHI | 사진과 식단을 일별로 기록 | 음식 객체 탐지와 영양 기록 |
+| WeekHI | 누적 식단의 주의 신호 확인 | 영양 변수 기반 위험 신호 |
+| MonthHI | 보장 질병 기준의 상품 탐색 | 설명 가능한 규칙 기반 매칭 |
 
-## Role and Contribution
+사진에서 음식 종류를 탐지한 뒤 사용자가 인분·토핑을 확인하거나 입력하는 전제를 둡니다. 섭취량을 사진만으로 자동 측정했다고 주장하지 않습니다.
 
-This was a team competition project. The public repository presents the parts I can safely stand behind for portfolio review:
+## 팀과 기여 범위
 
-- AI/data pipeline framing from meal photo to nutrition record to disease-risk signal.
-- YOLOv5 food-detection setup, label conversion workflow, and model-result documentation.
-- Disease-risk modeling notes using nutrition variables, age, sex, SMOTE, stratified validation, and XGBoost.
-- Rule-based insurance-product matching that keeps recommendation reasons inspectable.
-- Public-safe curation of README, docs, notebooks, artifacts, and blocker evidence.
+프로젝트 팀은 문창수, 박민규, 유정은, 이현지로 구성됐습니다. 개별 역할을 원문 근거 없이 추정하지 않으며, 이 저장소에서 박민규가 설명하는 범위는 음식 인식/라벨 변환 흐름, 위험 모델링 근거 정리, 규칙 추천 구조, 공개 포트폴리오 큐레이션입니다.
 
-It does not claim sole authorship of all team planning, presentation, or submission materials.
+## 검토 순서
 
-## Repository Review Path
+1. `README.md`에서 문제·서비스·결과·한계를 확인합니다.
+2. `docs/modeling.md`와 `docs/recommendation.md`에서 의사결정 근거를 확인합니다.
+3. `src/recommendation.py`로 공개 가능한 추천 규칙을 실행합니다.
+4. `notebooks/`에서 원본 데이터 없이 검토 가능한 실험 구조를 확인합니다.
 
-1. `README.md` - service summary, role, evidence, public-safety boundary.
-2. `docs/modeling.md` - food detection, nutrition aggregation, and disease-risk modeling.
-3. `docs/recommendation.md` - rule-based coverage matching and demo blocker notes.
-4. `docs/data.md` - data sources, excluded materials, and publish blockers.
-5. `notebooks/` - preserved experiment records.
-6. `src/recommendation.py` - inspectable recommendation example; the module-level demo is currently blocked by malformed string literals.
+## 비목표
 
-## Public-Safe Artifacts
-
-- `artifacts/images/pr_curve.png`
-- `artifacts/presentations/EveryHI_final_presentation.pptx`
-- `notebooks/*.ipynb` as experiment records
-- `src/*.py` and `src/yolov5_data.yaml` as inspectable implementation artifacts
-- `docs/*.md` as public review documentation
-
-## Excluded Materials
-
-- Raw food images and bounding-box label corpora.
-- Korean National Health and Nutrition Examination Survey raw data and original food-nutrition source data.
-- Crawled raw materials, Drive archives, zip files, copied `.git` folders, and local `archive/` contents.
-- Team-private drafts, forms, signed/private documents, and personal information.
-- Credentials, `.env` files, and notebook checkpoints.
-
-## Evidence and Results
-
-- YOLOv5 detection experiment documented as batch size 16, 200 epochs, train:test 8:2, and mAP 0.94 at IoU 0.5 in the preserved project artifact.
-- Food dataset design documented as 20 food categories with roughly 300 images per class in the project notes.
-- Disease-risk model feature strategy documented as 23 nutrition variables plus age and sex.
-- Recommendation behavior can be inspected through `src/recommendation.py`, but the module-level demo is not currently verified as runnable.
-
-## Reproducibility
-
-The current repository is inspection-first. The command `python -m src.recommendation` is currently unverified and blocked by malformed demo string literals in `src/recommendation.py`.
-
-```bash
-pip install -r requirements.txt
-```
-
-Full model retraining is intentionally not promised because original raw data and some source materials are excluded from the public repo.
-
-## Limitations
-
-- Prototype disease-risk output is not medical advice, underwriting evidence, or financial advice.
-- The insurance matching layer is rule-based and does not validate current premiums, exclusions, waiting periods, policy terms, or eligibility.
-- Existing artifacts include one file over 50 MB and one insurance-product spreadsheet that must be reviewed before a clean public push decision.
+- 의료 진단 또는 치료 권고
+- 보험 심사, 보험료 산정, 가입 가능 여부 판단
+- 원본 데이터 없는 동일 성능의 재현 주장

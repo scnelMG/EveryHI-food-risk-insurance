@@ -1,31 +1,22 @@
-# Insurance Recommendation
+# 보험 보장 항목 매칭
 
-## Goal
+## 입력과 순서
 
-The recommendation layer takes high-risk disease outputs from the disease-risk model and ranks disease-insurance products that cover those diseases.
+1. 월 단위 영양 집계와 사용자 속성으로 질병별 위험 확률을 계산합니다.
+2. 각 질병의 precision·recall 균형을 고려해 설정한 임계값 이상을 고위험 후보로 분류합니다.
+3. 고위험 후보와 보험 상품의 보장 질병을 매칭합니다.
+4. 매칭된 고위험 질병 수를 먼저, 위험 점수 합계를 다음 기준으로 사용해 정렬합니다.
 
-## Recommendation Flow
+`src/recommendation.py`는 실제 보험 원문이나 개인 데이터를 포함하지 않는 `DiseaseRisk`, `InsuranceProduct` 예제로 위 규칙을 재현합니다.
 
-1. Feed monthly average nutrition totals and user attributes into the disease-risk model.
-2. Estimate disease-level risk probabilities.
-3. Set disease-specific high-risk thresholds using the project's recall/precision tradeoff.
-4. Match high-risk diseases to insurance-product coverage fields.
-5. Rank matching products by number of covered high-risk diseases and total high-risk score.
+```bash
+python -m src.recommendation
+```
 
-## Rule-Based Filtering
+## 왜 규칙 기반인가
 
-This project intentionally used an explainable rule-based filter instead of a complex recommender system.
+공모전 PoC에서는 추천 결과의 이유를 사용자가 이해하고 팀이 검토할 수 있어야 했습니다. 따라서 복잡한 랭킹 모델보다 “어떤 고위험 질병을 어떤 보장 항목이 덮는가”를 명시하는 규칙 기반 필터를 선택했습니다.
 
-- Input: disease-level risk scores and disease-insurance product data.
-- Rule: prioritize products covering the user's high-risk diseases.
-- Ranking criteria: covered high-risk disease count, then sum of matched disease-risk scores.
-- Benefit: recommendation reasons can be explained in a competition prototype.
-- Limitation: premiums, eligibility, exclusions, waiting periods, and current policy terms require additional verified product data.
+## 범위 밖인 것
 
-The inspectable example implementation is in `src/recommendation.py`.
-
-## Public Review Notes
-
-- The demo implementation uses `DiseaseRisk` and `InsuranceProduct` dataclasses so the ranking rule can be inspected without private data.
-- The command `python -m src.recommendation` is currently unverified and blocked by malformed demo string literals in `src/recommendation.py`; treat this as source-inspection evidence until the demo literals are repaired.
-- The approach is not a licensed insurance recommendation system and must not be presented as financial advice.
+이 매칭은 실제 상품 추천·판매·자문이 아닙니다. 보험료, 면책·대기 기간, 인수 기준, 약관 예외, 가입 가능성, 최신 상품 정보는 반영하지 않으며, 실제 의사결정에 사용하면 안 됩니다.
