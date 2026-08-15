@@ -2,6 +2,8 @@
   <img src="artifacts/images/service-food-registration.png" alt="EveryHI 식단 사진 등록 화면 — 실제 최종 발표 자료 발췌" width="720" />
 </p>
 
+<p align="center"><sub>실제 최종 발표 자료 14쪽의 식단 사진 등록·사용자 확인 흐름</sub></p>
+
 # EveryHI
 
 <p align="center">2023 삼성화재 리스크관리 공모전 · 식단 사진 기록을 건강관리와 보험 탐색의 맥락으로 연결한 인슈어테크 PoC</p>
@@ -26,6 +28,15 @@
 | 공개 범위 | 원본 데이터·가중치·보험 원문을 제외한 AI/데이터 파이프라인 포트폴리오 |
 
 > **PoC 범위**: 발표 화면의 위험도와 추천 값은 시연 예시입니다. 의료 진단, 보험 심사·인수, 보험료 산정 또는 금융 의사결정에 사용하지 않습니다.
+
+## 빠른 검토 경로
+
+| 먼저 볼 것 | 확인할 내용 |
+| --- | --- |
+| [최종 발표 자료](artifacts/presentations/EveryHI_final_presentation.pptx) | 문제 정의, 실제 서비스 화면, 음식 탐지·위험 신호·추천의 전체 흐름 |
+| [프로젝트 브리프](docs/project-brief.md) | 프로젝트의 범위와 박민규의 기여 범위 |
+| [모델링 근거](docs/modeling.md) | YOLOv5, 영양 변수, XGBoost·SMOTE·검증 설계 |
+| [추천 로직](src/recommendation.py) | 개인·상품 원문 없이 확인하는 규칙 기반 보장 항목 매칭 |
 
 ## 왜 만들었나
 
@@ -68,12 +79,21 @@ flowchart LR
 | 항목 | 프로젝트 산출물에 남은 근거 |
 | --- | --- |
 | 음식 탐지 학습 | batch size 16, 200 epochs |
-| 음식 탐지 평가 | mAP 0.94 at IoU 0.5 |
+| 최종 발표 자료의 음식 탐지 평가 | IoU 0.5 기준 mAP **0.94** |
+| 보존된 PR curve | all classes mAP@0.5 **0.927** |
 | 데이터 설계 | 프로젝트 메모는 20개 음식 범주·범주당 약 300장, 공개 YAML은 22개 라벨을 보존 |
 | 위험 모델 입력 | 23개 영양 변수, 나이, 성별 |
 | 대표 산출물 | [PR curve](artifacts/images/pr_curve.png), [최종 발표 자료](artifacts/presentations/EveryHI_final_presentation.pptx) |
 
-`mAP 0.94`는 공개용으로 재학습해 새로 산출한 수치가 아니라, 원 프로젝트의 보존된 평가 결과입니다. 원본 음식 이미지·라벨과 국민건강영양조사 원자료를 제외했으므로 이 저장소는 동일 수치를 재현한다고 주장하지 않습니다.
+최종 발표 자료에는 IoU 0.5 기준 mAP **0.94**가, 저장소의 PR curve에는 all classes mAP@0.5 **0.927**이 남아 있습니다. 두 결과는 모두 원 프로젝트에서 보존된 서로 다른 산출물이며, 실행 로그와 원본 데이터가 공개되지 않아 동일 학습 실행의 결과라고 단정하지 않습니다. 이 저장소는 어느 수치도 공개용 재학습으로 다시 산출하거나 재현한다고 주장하지 않습니다.
+
+<details>
+<summary>보존된 모델 평가 이미지 보기</summary>
+
+<p align="center"><img src="artifacts/images/pr_curve.png" alt="EveryHI 음식 객체 탐지 모델의 보존된 PR curve" width="720" /></p>
+<p align="center"><sub>원 프로젝트에 남은 별도 학습 산출물의 PR curve이며, 범례의 all classes mAP@0.5는 0.927입니다. 공개용으로 다시 학습해 만든 결과가 아닙니다.</sub></p>
+
+</details>
 
 <details>
 <summary>검토 시 참고할 데이터 범주 차이</summary>
@@ -91,14 +111,26 @@ flowchart LR
 - 보장 질병 기반 규칙 추천을 검토 가능한 코드로 정리
 - 원본 데이터·팀 내부 자료·대용량 가중치를 제외한 공개 안전성 점검과 포트폴리오 문서화
 
-## 저장소 둘러보기
+발표 자료에는 팀원 이름만 남아 있어, 원문 근거 없이 다른 구성원의 세부 역할을 추정해 적지 않았습니다. 팀 전체의 결과를 개인 단독 성과로 주장하지 않는 기준도 함께 유지합니다.
+
+## 저장소 구성
+
+```text
+.
+├── artifacts/
+│   ├── images/                 # 실제 발표 자료에서 추출한 서비스·모델 결과 이미지
+│   └── presentations/          # 실제 최종 발표 자료
+├── docs/                       # 문제 정의, 모델링, 추천, 데이터 공개 경계
+├── notebooks/                  # 원본 데이터 없이 검토하는 실험 동반 노트북
+├── src/                        # 라벨 변환, YOLOv5 실행 연결부, 추천 규칙
+├── README.md
+└── requirements.txt
+```
 
 | 경로 | 무엇을 확인할 수 있나 |
 | --- | --- |
-| [docs/project-brief.md](docs/project-brief.md) | 문제 정의, 서비스 범위, 팀 프로젝트 내 기여 범위 |
-| [docs/modeling.md](docs/modeling.md) | 음식 탐지·영양 집계·위험 신호 모델의 근거 |
-| [docs/recommendation.md](docs/recommendation.md) | 질병별 임계값과 보장 항목 매칭 규칙 |
 | [docs/data.md](docs/data.md) | 데이터 출처 범주와 공개/비공개 경계 |
+| [docs/recommendation.md](docs/recommendation.md) | 질병별 임계값과 보장 항목 매칭 원리 |
 | [notebooks/](notebooks) | 실행 결과를 비운 공개 검토용 실험 동반 노트북 |
 | [src/recommendation.py](src/recommendation.py) | 개인·상품 원문 없이 확인하는 규칙 기반 추천 예제 |
 

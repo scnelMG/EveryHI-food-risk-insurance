@@ -20,7 +20,7 @@
 
 ## 검토 순서
 
-1. `README.md`에서 문제·서비스·결과·한계를 확인합니다.
+1. `README.md`에서 문제·서비스·결과·두 보존 평가 산출물의 차이·한계를 확인합니다.
 2. `docs/modeling.md`와 `docs/recommendation.md`에서 의사결정 근거를 확인합니다.
 3. `src/recommendation.py`로 공개 가능한 추천 규칙을 실행합니다.
 4. `notebooks/`에서 원본 데이터 없이 검토 가능한 실험 구조를 확인합니다.

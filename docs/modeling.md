@@ -2,14 +2,14 @@
 
 ## 1. 음식 객체 탐지
 
-식단 사진 한 장에 여러 음식이 포함될 수 있어 YOLOv5 객체 탐지를 사용했습니다. 프로젝트 산출물에 남은 학습 설정은 batch size 16, 200 epochs이며, 보존된 결과는 IoU 0.5 기준 mAP 0.94입니다.
+식단 사진 한 장에 여러 음식이 포함될 수 있어 YOLOv5 객체 탐지를 사용했습니다. 프로젝트 산출물에 남은 학습 설정은 batch size 16, 200 epochs입니다. 최종 발표 자료에는 IoU 0.5 기준 mAP 0.94가 기록됐고, 저장소의 별도 PR curve 범례에는 all classes mAP@0.5 0.927이 남아 있습니다.
 
 - 공개 설정: `src/yolov5_data.yaml`
 - 결과 근거: `artifacts/images/pr_curve.png`
 - 실제 인식 예시: `artifacts/images/food-detection-result.png`
 - 실행 연결부: `src/detect_yolov5.py`
 
-`detect_yolov5.py`는 upstream YOLOv5의 전체 소스를 복사하지 않고, 별도 clone과 비공개 가중치를 받아 실행하는 연결부입니다. 이 저장소에는 원본 데이터와 가중치가 없으므로 탐지 재학습이나 추론 실행을 기본 경로로 제공하지 않습니다.
+`detect_yolov5.py`는 upstream YOLOv5의 전체 소스를 복사하지 않고, 별도 clone과 비공개 가중치를 받아 실행하는 연결부입니다. 이 저장소에는 원본 데이터와 가중치가 없으므로 탐지 재학습이나 추론 실행을 기본 경로로 제공하지 않습니다. 두 mAP 값은 서로 다른 보존 산출물일 수 있으며, 원본 실행 로그가 없어 단일 최종 수치로 합치지 않습니다.
 
 ## 2. 영양 집계
 
