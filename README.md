@@ -151,3 +151,7 @@ python -m src.recommendation
 - 실제 원본 데이터와 학습 가중치는 제외했으며, README에는 최종 발표 자료에서 추출한 실제 화면만 사용했습니다.
 
 공개 범위와 제외 사유는 [docs/data.md](docs/data.md), 사후 개선 계획은 [docs/retrospective.md](docs/retrospective.md)에서 확인할 수 있습니다.
+
+## 이용 안내
+
+이 저장소는 포트폴리오·학습 기록 열람을 위해 공개합니다. 코드·문서·이미지의 재사용, 수정, 배포는 사전 문의가 필요합니다.
